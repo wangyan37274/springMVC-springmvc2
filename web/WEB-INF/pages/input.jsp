@@ -1,5 +1,5 @@
-<%@page import="java.util.HashMap"%>
-<%@page import="java.util.Map"%>
+<%@ page import="java.util.HashMap"%>
+<%@ page import="java.util.Map"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
@@ -29,12 +29,11 @@
 		如果该属性值也不存在，则会发生错误。
 	-->
 	<br><br>
-	<form:form action="${pageContext.request.contextPath }/emp" method="POST" 
-		modelAttribute="employee">
-		
+	<!-- ${pageContext.request.contextPath } 绝对路径 -->
+	<form:form action="${pageContext.request.contextPath }/emp" method="POST" modelAttribute="employee">
 		<form:errors path="*"></form:errors>
 		<br>
-		
+		<!-- 根据id判断，是修改还是添加，如果是修改，则不显示lastName -->
 		<c:if test="${employee.id == null }">
 			<!-- path 属性对应 html 表单标签的 name 属性值 -->
 			LastName: <form:input path="lastName"/>
@@ -44,7 +43,7 @@
 			<form:hidden path="id"/>
 			<input type="hidden" name="_method" value="PUT"/>
 			<%-- 对于 _method 不能使用 form:hidden 标签, 因为 modelAttribute 对应的 bean 中没有 _method 这个属性 --%>
-			<%-- 
+			<%--
 			<form:hidden path="_method" value="PUT"/>
 			--%>
 		</c:if>

@@ -16,7 +16,7 @@
 	因找不到对应处理器将导致错误。
 	2. 解决: 在 SpringMVC 的配置文件中配置 <mvc:default-servlet-handler/>
 -->
-<script type="text/javascript" src="scripts/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="../scripts/jquery-1.9.1.min.js"></script>
 <script type="text/javascript">
 	$(function(){
 		$(".delete").click(function(){
