@@ -10,7 +10,7 @@
 </head>
 <body>
 	
-	<fmt:message key="i18n.user"></fmt:message>
+	<fmt:message key="i18n.user"/>
 	
 	<br><br>
 	<a href="i18n2">I18N2 PAGE</a>

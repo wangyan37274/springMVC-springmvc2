@@ -82,13 +82,13 @@ public class EmployeeHandler {
 		System.out.println("save: " + employee);
 
 		if(result.getErrorCount() > 0){
-			System.out.println("������!");
+			System.out.println("出错了!");
 			
 			for(FieldError error:result.getFieldErrors()){
 				System.out.println(error.getField() + ":" + error.getDefaultMessage());
 			}
 			
-			//����֤����, ��ת���Ƶ�ҳ��
+			//若验证出错，则转向定制的页面
 			map.put("departments", departmentDao.getDepartments());
 			return "input";
 		}

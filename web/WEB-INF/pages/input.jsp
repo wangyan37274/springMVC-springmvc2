@@ -13,6 +13,7 @@
 </head>
 <body>
 
+	<!-- 测试自己定义的类型转化器 -->
 	<form action="testConversionServiceConverer" method="POST">
 		<!-- lastname-email-gender-department.id 例如: GG-gg@atguigu.com-0-105 -->
 		Employee: <input type="text" name="employee"/>

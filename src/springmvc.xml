@@ -10,25 +10,58 @@
                 http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
     <!-- 配置自动扫面的包 -->
-    <context:component-scan base-package="com.wangyan.springmvc"></context:component-scan>
+    <context:component-scan base-package="com.wangyan.springmvc"/>
     <!-- 配置视图解析器 -->
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-        <property name="prefix" value="/WEB-INF/pages/"></property>
-        <property name="suffix" value=".jsp"></property>
+        <property name="prefix" value="/WEB-INF/pages/"/>
+        <property name="suffix" value=".jsp"/>
     </bean>
     <!--
-        若将 DispatcherServlet 请求映射配置为 /,
-	    则 Spring MVC 将捕获 WEB 容器的所有请求, 包括静态资源的请求, SpringMVC 会将他们当成一个普通请求处理,
-	    因找不到对应处理器将导致错误。
-	    该配置忽略静态请求
+        springmvc 处理请求的步骤：
+        1，把所有的requestMapping注解的url，放到一个容器urlMap中
+        2，若将 DispatcherServlet 请求映射配置为 /, 则 Spring MVC 将捕获 WEB 容器的所有请求（包括静态资源的请求）
+        将请求路径和urlMap中的url比较，如果没有，则服务器发生没有找到映射的错误
 
-		default-servlet-handler 将在 SpringMVC 上下文中定义一个 DefaultServletHttpRequestHandler,
-		它会对进入 DispatcherServlet 的请求进行筛查, 如果发现是没有经过映射的请求, 就将该请求交由 WEB 应用服务器默认的
-		Servlet 处理. 如果不是静态资源的请求，才由 DispatcherServlet 继续处理
+        问题：导致当我们要访问静态文件时，有可能访问不到！
+
+        default-servlet-handler的作用：
+        把对静态资源的访问由 HandlerMapping 转到 org.springframework.web.servlet.resource.DefaultServletHttpRequestHandler 处理并返回.
+        DefaultServletHttpRequestHandler的作用是维护一个SimpleUrlHandlerMapping存放静态资源的url
+		也就是说，如果发现在urlMap是没有经过映射的请求, 将从SimpleUrlHandlerMapping中找到对应url，不会发生没有找到映射的错误
+
+		关于寻找映射的顺序问题：
+		DefaultAnnotationHandlerMapping 的 order 属性值是：0
+		<mvc:resources/ >自动注册的 SimpleUrlHandlerMapping 的 order 属性值是： 2147483646
+		<mvc:default-servlet-handler/>自动注册的 SimpleUrlHandlerMapping 的 order 属性值是：2147483647
+		spring 会先执行 order 值比较小的。
+		当访问一个 a.jpg 图片文件时，先通过 DefaultAnnotationHandlerMapping 来找处理器，一定是找不到的，我们没有叫 a.jpg 的 Action。
+		再按 order 值升序找，由于最后一个 SimpleUrlHandlerMapping 是匹配 "/**" 的，所以一定会匹配上，再响应图片。
 
 		一般 WEB 应用服务器默认的 Servlet 的名称都是 default.
 		若所使用的 WEB 服务器的默认 Servlet 名称不是 default，则需要通过 default-servlet-name 属性显式指定
     -->
     <mvc:default-servlet-handler/>
-    <mvc:annotation-driven></mvc:annotation-driven>
+    <mvc:annotation-driven/>
+
+    <!-- 配置国际化资源文件 -->
+    <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+        <property name="basename" value="i18n"/>
+    </bean>
+
+    <!-- 配置 SessionLocaleResolver -->
+    <bean id="localeResolver" class="org.springframework.web.servlet.i18n.SessionLocaleResolver"/>
+
+    <!-- 配置 LocaleChangeInterceptor 拦截器 -->
+    <mvc:interceptors>
+        <bean class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor"/>
+    </mvc:interceptors>
+
+    <mvc:view-controller path="/i18n" view-name="i18n"/>
+    <mvc:view-controller path="/i18n2" view-name="i18n2"/>
+
+    <!-- 配置 multipartResolver -->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="defaultEncoding" value="UTF-8"/>
+        <property name="maxUploadSize" value="1024000"/>
+    </bean>
 </beans>
